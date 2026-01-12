@@ -14,6 +14,8 @@ const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 
 // render - sample page
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
+const DasboardTest = Loadable(lazy(() => import('pages/extra-pages/dashboard-test')));
+
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -49,6 +51,10 @@ const MainRoutes = {
     {
       path: 'sample-page',
       element: <SamplePage />
+    },
+    {
+      path: 'dashboard-test',
+      element: <DasboardTest />
     }
   ]
 };

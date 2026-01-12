@@ -29,7 +29,15 @@ const support = {
       icon: icons.QuestionOutlined,
       external: true,
       target: true
+    },
+    {
+      id: 'dashboard-test',
+      title: 'Dashboard Test',
+      type: 'item',
+      url: '/dashboard-test',
+      icon: icons.ChromeOutlined
     }
+
   ]
 };
 
