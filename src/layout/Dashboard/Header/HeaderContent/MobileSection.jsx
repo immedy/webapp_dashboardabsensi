@@ -9,7 +9,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 
 // project imports
-import Search from './Search';
 import Profile from './Profile';
 import IconButton from 'components/@extended/IconButton';
 import Transitions from 'components/@extended/Transitions';
@@ -87,8 +86,7 @@ export default function MobileSection() {
             <Paper sx={(theme) => ({ boxShadow: theme.customShadows.z1 })}>
               <ClickAwayListener onClickAway={handleClose}>
                 <AppBar color="inherit">
-                  <Toolbar>
-                    <Search />
+                  <Toolbar>                   
                     <Profile />
                   </Toolbar>
                 </AppBar>
