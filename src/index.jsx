@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import { AuthProvider } from './contexts/AuthContext';
 
 // style.scss
 import 'assets/style.css';
@@ -28,7 +29,9 @@ const root = createRoot(container);
 
 root.render(
   <ConfigProvider>
-    <App />
+    <AuthProvider>
+      <App/>
+    </AuthProvider>
   </ConfigProvider>
 );
 

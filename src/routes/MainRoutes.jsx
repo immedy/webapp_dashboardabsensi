@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import AuthGuard from '../utils/route-guard/AuthGuard';
 
 // project imports
 import Loadable from 'components/Loadable';
@@ -19,12 +20,12 @@ const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')))
 
 const MainRoutes = {
   path: '/',
-  element: <DashboardLayout />,
+  element: (
+    <AuthGuard>
+      <DashboardLayout />
+    </AuthGuard>
+  ),
   children: [
-    {
-      path: '/',
-      element: <DashboardDefault />
-    },
     {
       path: 'dashboard',
       children: [
