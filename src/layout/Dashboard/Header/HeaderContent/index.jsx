@@ -6,8 +6,7 @@ import Box from '@mui/material/Box';
 
 // project imports
 import Profile from './Profile';
-import Notification from './Notification';
-import MobileSection from './MobileSection';
+
 
 // project import
 import { GithubOutlined } from '@ant-design/icons';
@@ -22,7 +21,7 @@ export default function HeaderContent() {
       {!downLG}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}           
       {!downLG && <Profile />}
-      {downLG && <MobileSection />}
+  
     </>
   );
 }

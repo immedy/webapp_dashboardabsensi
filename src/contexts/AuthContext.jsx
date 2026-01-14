@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   // 🔹 Ambil data user dari API
   const fetchUser = async () => {
     try {
-      const res = await api.get('/getpegawai');
+      const res = await api.get('/auth/getuser');
       setUser(res.data);
       localStorage.setItem('user', JSON.stringify(res.data));
     } catch (err) {
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (username, password) => {
-    const res = await api.post('/login', { username, password });
+    const res = await api.post('/auth/login', { username, password });
     const { token } = res.data;
 
     localStorage.setItem('access_token', token);
