@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -27,8 +28,6 @@ import AnimateButton from 'components/@extended/AnimateButton';
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
-
-// ============================|| JWT - LOGIN ||============================ //
 
 export default function AuthLogin({ isDemo = false }) {
   const [checked, setChecked] = React.useState(false);
@@ -59,9 +58,14 @@ export default function AuthLogin({ isDemo = false }) {
       onSubmit={async (values, { setErrors, setSubmitting }) => {
         try {
           await login(values.username, values.password);
+          toast.success('Login Berhasil!');
           navigate('/dashboard/default', { replace: true });
         } catch (error) {
-          setErrors({ submit: 'Login gagal, periksa username & password' });
+          const message = error.message;
+          // Kita tetap setErrors agar state formik tahu ada error, 
+          // tapi tampilannya (UI) di bawah kita hapus.
+          setErrors({ submit: message });
+          toast.error(message);
         } finally {
           setSubmitting(false);
         }
@@ -127,13 +131,7 @@ export default function AuthLogin({ isDemo = false }) {
               )}
             </Grid>
 
-            {errors.submit && (
-              <Grid size={12}>
-                <FormHelperText error>
-                  {errors.submit}
-                </FormHelperText>
-              </Grid>
-            )}
+            {/* Bagian errors.submit (Pesan error di bawah form) telah dihapus dari sini */}
 
             <Grid sx={{ mt: -1 }} size={12}>
               <Stack direction="row" sx={{ gap: 2, alignItems: 'baseline', justifyContent: 'space-between' }}>

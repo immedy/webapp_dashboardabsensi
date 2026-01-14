@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { AuthProvider } from './contexts/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
 
 // style.scss
 import 'assets/style.css';
@@ -31,6 +32,18 @@ root.render(
   <ConfigProvider>
     <AuthProvider>
       <App/>
+      <ToastContainer 
+        position="top-right"   // posisi toast
+        autoClose={5000}       // durasi auto close (ms)
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"        // bisa "light" | "dark" | "colored"
+      />
     </AuthProvider>
   </ConfigProvider>
 );

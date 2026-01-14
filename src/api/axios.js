@@ -19,14 +19,14 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// auto logout jika token invalid / expired
+// Penanganan response
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      // window.location.href dihapus agar tidak me-refresh halaman (toast tidak hilang)
     }
     return Promise.reject(error);
   }

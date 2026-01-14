@@ -8,7 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Ambil data user dari API
   const fetchUser = async () => {
     try {
       const res = await api.get('/auth/getuser');
@@ -16,39 +15,47 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(res.data));
     } catch (err) {
       console.error('Gagal fetch user', err);
-      logout();
+      // logout(); // Dimatikan sementara agar tidak mengganggu proses login
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-
-      if (decoded.exp * 1000 < Date.now()) {
-        logout();
-      } else {
-        fetchUser(); // ⬅️ AMBIL DATA USER DARI API
+    const initAuth = async () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        setLoading(false);
+        return;
       }
-    } catch {
-      logout();
-    } finally {
-      setLoading(false);
-    }
+
+      try {
+        const decoded = jwtDecode(token);
+        if (decoded.exp * 1000 < Date.now()) {
+          logout();
+        } else {
+          await fetchUser();
+        }
+      } catch {
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const login = async (username, password) => {
-    const res = await api.post('/auth/login', { username, password });
-    const { token } = res.data;
+    try {
+      const res = await api.post('/auth/login', { username, password });
+      const { token } = res.data;
 
-    localStorage.setItem('access_token', token);
-    await fetchUser(); // ⬅️ setelah login, langsung ambil profil
+      localStorage.setItem('access_token', token);
+      await fetchUser();
+    } catch (err) {
+      // Menangkap pesan error dari response backend
+      const message = err.response?.data?.message || 'Login gagal, periksa kredensial anda';
+      throw new Error(message); 
+    }
   };
 
   const logout = () => {
