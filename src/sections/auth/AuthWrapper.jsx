@@ -17,30 +17,46 @@ import AuthBackground from './AuthBackground';
 
 export default function AuthWrapper({ children }) {
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box
+      sx={{
+        height: '100vh',
+        overflow: 'hidden',
+        position: 'relative'
+      }}
+    >
       <AuthBackground />
-      <Stack sx={{ minHeight: '100vh', justifyContent: 'flex-end' }}>
-        <Box sx={{ px: 3, mt: 3 }} size={12}>
-          <Logo to="/" />
+
+      <Stack
+        sx={{
+          height: '100vh',
+          justifyContent: 'space-between'
+        }}
+      >
+        {/* LOGO */}
+        <Box sx={{ px: 3, pt: 3 }}>
+          <Logo
+            to="/"
+            sx={{
+              width: 500,   
+              mx: 'auto'
+            }}
+          />
         </Box>
-        <Box size={12}>
-          <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            sx={{ minHeight: { xs: 'calc(100vh - 210px)', sm: 'calc(100vh - 134px)', md: 'calc(100vh - 132px)' } }}
-          >
-            <Grid>
-              <AuthCard>{children}</AuthCard>
-            </Grid>
-          </Grid>
-        </Box>
-        <Box sx={{ p: 3 }} size={12}>
+
+        {/* AUTH CARD */}
+        <Grid container justifyContent="center" alignItems="center" sx={{ flexGrow: 1 }}>
+          <AuthCard>{children}</AuthCard>
+        </Grid>
+
+        {/* FOOTER */}
+        <Box sx={{ p: 2 }}>
           <AuthFooter />
         </Box>
       </Stack>
     </Box>
   );
 }
+
+
 
 AuthWrapper.propTypes = { children: PropTypes.node };

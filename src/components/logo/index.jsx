@@ -1,22 +1,42 @@
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
+import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 
-// project imports
-import Logo from './LogoMain';
-import LogoIcon from './LogoIcon';
-import { APP_DEFAULT_PATH } from 'config';
+// assets
+import LogoDara from '../../assets/logo/logodara.png';
 
 // ==============================|| MAIN LOGO ||============================== //
 
-export default function LogoSection({ reverse, isIcon, sx, to }) {
-  return (
-    <ButtonBase disableRipple component={Link} to={to || APP_DEFAULT_PATH} sx={sx} aria-label="Logo">
-      {isIcon ? <LogoIcon /> : <Logo reverse={reverse} />}
-    </ButtonBase>
+export default function LogoSection({ sx, to }) {
+  const logo = (
+    <Box
+      component="img"
+      src={LogoDara}
+      alt="Logo"
+      sx={{
+        display: 'block',
+        maxWidth: '100%',
+        height: 'auto',
+        ...sx
+      }}
+    />
   );
+
+  if (to) {
+    return (
+      <ButtonBase component={RouterLink} to={to} sx={{ p: 0 }}>
+        {logo}
+      </ButtonBase>
+    );
+  }
+
+  return logo;
 }
 
-LogoSection.propTypes = { reverse: PropTypes.bool, isIcon: PropTypes.bool, sx: PropTypes.any, to: PropTypes.any };
+LogoSection.propTypes = {
+  sx: PropTypes.any,
+  to: PropTypes.string
+};

@@ -12,15 +12,23 @@ export default function DrawerHeader({ open }) {
       open={open}
       sx={{
         minHeight: '60px',
-        width: 'initial',
-        paddingTop: '8px',
-        paddingBottom: '8px',
-        paddingLeft: open ? '24px' : 0
+        paddingY: 1,
+        paddingLeft: open ? 3 : 1,
+        display: 'flex',
+        alignItems: 'center'
       }}
     >
-      <Logo isIcon={!open} sx={{ width: open ? 'auto' : 35, height: 35 }} />
+      <Logo
+        to="/"
+        sx={{
+          width: open ? 220 : 40,
+          height: 40,
+          transition: 'width 0.3s ease'
+        }}
+      />
     </DrawerHeaderStyled>
   );
 }
+
 
 DrawerHeader.propTypes = { open: PropTypes.bool };
