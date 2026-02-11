@@ -26,7 +26,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
-      // window.location.href dihapus agar tidak me-refresh halaman (toast tidak hilang)
+      // Redirect to login if not already on login page
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = import.meta.env.VITE_APP_BASE_NAME + '/login';
+      }
     }
     return Promise.reject(error);
   }

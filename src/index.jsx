@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { AuthProvider } from './contexts/AuthContext';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // style.scss
 import 'assets/style.css';

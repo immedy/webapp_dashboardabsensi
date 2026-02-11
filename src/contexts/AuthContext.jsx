@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import api from '../api/axios';
 
@@ -8,16 +8,22 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = async () => {
+  const logout = useCallback(() => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user');
+    setUser(null);
+  }, []);
+
+  const fetchUser = useCallback(async () => {
     try {
       const res = await api.get('/auth/getuser');
       setUser(res.data);
       localStorage.setItem('user', JSON.stringify(res.data));
     } catch (err) {
       console.error('Gagal fetch user', err);
-      // logout(); // Dimatikan sementara agar tidak mengganggu proses login
+      logout();
     }
-  };
+  }, [logout]);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -42,9 +48,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     initAuth();
-  }, []);
+  }, [fetchUser, logout]);
 
-  const login = async (username, password) => {
+  const login = useCallback(async (username, password) => {
     try {
       const res = await api.post('/auth/login', { username, password });
       const { token } = res.data;
@@ -56,13 +62,7 @@ export const AuthProvider = ({ children }) => {
       const message = err.response?.data?.message || 'Login gagal, periksa kredensial anda';
       throw new Error(message); 
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
-    setUser(null);
-  };
+  }, [fetchUser]);
 
   return (
     <AuthContext.Provider

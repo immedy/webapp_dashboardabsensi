@@ -5,18 +5,21 @@ import AuthGuard from '../utils/route-guard/AuthGuard';
 import Loadable from 'components/Loadable';
 import DashboardLayout from 'layout/Dashboard';
 
-// render- Dashboard
+// render - Dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 
-// render - color
-const Color = Loadable(lazy(() => import('pages/component-overview/color')));
-const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
-const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
+// render - Master Data
+const KomponenDarah = Loadable(lazy(() => import('pages/master/KomponenDarah')));
+const Supplier = Loadable(lazy(() => import('pages/master/Supplier')));
+const Ruangan = Loadable(lazy(() => import('pages/master/Ruangan')));
 
-// render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
-const DasboardTest = Loadable(lazy(() => import('sections/dashboard/default/dashboard-test')));
+// render - Transaksi
+const DarahMasuk = Loadable(lazy(() => import('pages/transaksi/DarahMasuk')));
+const DarahKeluar = Loadable(lazy(() => import('pages/transaksi/DarahKeluar')));
 
+// render - Stok Opname
+const StokOpname = Loadable(lazy(() => import('pages/stokopname/StokOpname')));
+const StokOpnameDetail = Loadable(lazy(() => import('pages/stokopname/StokOpnameDetail')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -29,6 +32,10 @@ const MainRoutes = {
   ),
   children: [
     {
+      path: '/',
+      element: <DashboardDefault />
+    },
+    {
       path: 'dashboard',
       children: [
         {
@@ -38,24 +45,47 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'typography',
-      element: <Typography />
+      path: 'master',
+      children: [
+        {
+          path: 'komponen-darah',
+          element: <KomponenDarah />
+        },
+        {
+          path: 'supplier',
+          element: <Supplier />
+        },
+        {
+          path: 'ruangan',
+          element: <Ruangan />
+        }
+      ]
     },
     {
-      path: 'color',
-      element: <Color />
+      path: 'transaksi',
+      children: [
+        {
+          path: 'darah-masuk',
+          element: <DarahMasuk />
+        },
+        {
+          path: 'darah-keluar',
+          element: <DarahKeluar />
+        }
+      ]
     },
     {
-      path: 'shadow',
-      element: <Shadow />
-    },
-    {
-      path: 'sample-page',
-      element: <SamplePage />
-    },
-    {
-      path: 'dashboard-test',
-      element: <DasboardTest />
+      path: 'stokopname',
+      children: [
+        {
+          path: '',
+          element: <StokOpname />
+        },
+        {
+          path: 'detail/:id',
+          element: <StokOpnameDetail />
+        }
+      ]
     }
   ]
 };
