@@ -50,9 +50,10 @@ export default function useKomponenDarah() {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Ambil list data awal. `refetch` dipanggil lagi setelah create/update/delete sukses.
-  const { data, loading, refetch } = useDataFetch(() => komponenDarahService.getKomponenDarah({ page, search }), [page, search]);
+  const { data, loading, refetch } = useDataFetch(() => komponenDarahService.getKomponenDarah({ page, search }), [page, search, refreshKey]);
   const komponenList = data?.items ?? [];
   const pagination = data?.pagination ?? {
     currentPage: 1,
@@ -67,6 +68,8 @@ export default function useKomponenDarah() {
     setFormData(INITIAL_FORM_DATA);
   };
 
+  const triggerRefresh = () => setRefreshKey((prev) => prev + 1);
+
   // Submit handler:
   // - jika editMode true => update data by id
   // - jika false => create data baru
@@ -76,9 +79,13 @@ export default function useKomponenDarah() {
     () => {
       handleCloseDialog();
       if (editMode) {
-        refetch();
+        triggerRefresh();
       } else {
-        setPage(1);
+        if (page === 1) {
+          triggerRefresh();
+        } else {
+          setPage(1);
+        }
       }
     }
   );
