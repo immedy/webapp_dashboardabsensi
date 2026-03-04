@@ -9,8 +9,7 @@ import {
   Stack,
   Chip,
   MenuItem,
-  Alert,
-  Autocomplete
+  Alert
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
@@ -20,6 +19,7 @@ import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import AnimateButton from 'components/@extended/AnimateButton';
+import InputAutoComplete from 'components/input/InputAutoComplete';
 import { useDataFetch, useFormSubmit } from 'hooks/useBloodBank';
 import { bloodOutService, bloodInventoryService, masterDataService } from 'services/bloodBank.service';
 import { formatDate } from 'utils/dateUtils';
@@ -172,21 +172,15 @@ export default function DarahKeluar() {
               Pastikan data pasien dan permintaan darah sudah sesuai!
             </Alert>
 
-            <Autocomplete
-              fullWidth
+            <InputAutoComplete
+              label="Pilih Kantong Darah"
+              required
               options={availableBlood || []}
               getOptionLabel={(option) => 
                 `${option.no_kantong} - ${option.golongan}${option.rhesus} - ${option.komponen}`
               }
               value={selectedBlood}
-              onChange={(e, newValue) => handleBloodSelect(newValue)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Pilih Kantong Darah"
-                  required
-                />
-              )}
+              onChange={handleBloodSelect}
               renderOption={(props, option) => {
                 const { key, ...optionProps } = props;
                 return (
