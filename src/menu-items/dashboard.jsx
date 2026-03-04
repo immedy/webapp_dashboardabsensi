@@ -6,7 +6,8 @@ import {
   ExportOutlined,
   ImportOutlined,
   SettingOutlined,
-  DatabaseOutlined
+  DatabaseOutlined,
+  SwapOutlined
 } from '@ant-design/icons';
 
 // icons
@@ -17,7 +18,8 @@ const icons = {
   ExportOutlined,
   ImportOutlined,
   SettingOutlined,
-  DatabaseOutlined
+  DatabaseOutlined,
+  SwapOutlined
 };
 
 // ==============================|| MENU ITEMS - BLOOD BANK ||============================== //
@@ -76,20 +78,28 @@ const transaksi = {
   type: 'group',
   children: [
     {
-      id: 'darah-masuk',
-      title: 'Darah Masuk',
-      type: 'item',
-      url: '/transaksi/darah-masuk',
-      icon: icons.ImportOutlined,
-      breadcrumbs: true
-    },
-    {
-      id: 'darah-keluar',
-      title: 'Darah Keluar',
-      type: 'item',
-      url: '/transaksi/darah-keluar',
-      icon: icons.ExportOutlined,
-      breadcrumbs: true
+      id: 'transaksi-darah',
+      title: 'Transaksi Darah',
+      type: 'collapse',
+      icon: icons.SwapOutlined,
+      children: [
+        {
+          id: 'darah-masuk',
+          title: 'Darah Masuk',
+          type: 'item',
+          url: '/transaksi/darah-masuk',
+          icon: icons.ImportOutlined,
+          breadcrumbs: true
+        },
+        {
+          id: 'darah-keluar',
+          title: 'Darah Keluar',
+          type: 'item',
+          url: '/transaksi/darah-keluar',
+          icon: icons.ExportOutlined,
+          breadcrumbs: true
+        }
+      ]
     }
   ]
 };

@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 
 // MUI
 import Autocomplete from '@mui/material/Autocomplete';
@@ -16,11 +15,13 @@ export default function InputAutoComplete({
   loading = false,
   labelKey = 'name',
   placeholder = '',
-  size = 'small',
+  size = 'medium',
+  fullWidth = true,
   sx
 }) {
   return (
     <Autocomplete
+      fullWidth={fullWidth}
       options={options}
       loading={loading}
       value={value}
@@ -51,5 +52,6 @@ InputAutoComplete.propTypes = {
   labelKey: PropTypes.string,
   placeholder: PropTypes.string,
   size: PropTypes.oneOf(['small', 'medium']),
-  sx: PropTypes.object
+  fullWidth: PropTypes.bool,
+  sx: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.func])
 };

@@ -173,6 +173,7 @@ export default function DarahKeluar() {
             </Alert>
 
             <Autocomplete
+              fullWidth
               options={availableBlood || []}
               getOptionLabel={(option) => 
                 `${option.no_kantong} - ${option.golongan}${option.rhesus} - ${option.komponen}`
