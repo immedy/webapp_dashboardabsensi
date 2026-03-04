@@ -9,8 +9,7 @@ import {
   IconButton,
   Tooltip,
   Stack,
-  Chip,
-  MenuItem
+  Chip
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import MainCard from 'components/MainCard';
@@ -21,6 +20,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import ActionCell from 'components/tablesearch/ActionCell';
 import AnimateButton from 'components/@extended/AnimateButton';
+import InputAutoComplete from 'components/input/InputAutoComplete';
 import { useDataFetch, useFormSubmit, useDelete } from 'hooks/useBloodBank';
 import { masterDataService } from 'services/bloodBank.service';
 import EditOutlined from '@ant-design/icons/EditOutlined';
@@ -56,7 +56,7 @@ export default function Ruangan() {
   );
 
   const { submit: submitForm, loading: submitting } = useFormSubmit(
-    (data) => editMode 
+    (data) => editMode
       ? masterDataService.updateRuangan(formData.id, data)
       : masterDataService.createRuangan(data),
     () => {
@@ -132,10 +132,10 @@ export default function Ruangan() {
                   </TableCell>
                   <TableCell align="center">{row.kapasitas}</TableCell>
                   <TableCell align="center">
-                    <Chip 
-                      label={row.status} 
+                    <Chip
+                      label={row.status}
                       color={row.status === 'aktif' ? 'success' : 'default'}
-                      size="small" 
+                      size="small"
                     />
                   </TableCell>
                   <ActionCell>
@@ -185,20 +185,13 @@ export default function Ruangan() {
               onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
               required
             />
-            <TextField
-              select
+            <InputAutoComplete
               label="Jenis Ruangan"
-              fullWidth
-              value={formData.jenis}
-              onChange={(e) => setFormData({ ...formData, jenis: e.target.value })}
+              options={jenisRuangan}
+              value={formData.jenis || null}
+              onChange={(newValue) => setFormData({ ...formData, jenis: newValue || '' })}
               required
-            >
-              {jenisRuangan.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
+            />
             <TextField
               label="Kapasitas"
               fullWidth

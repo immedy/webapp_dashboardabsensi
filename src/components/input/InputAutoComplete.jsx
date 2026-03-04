@@ -27,7 +27,12 @@ export default function InputAutoComplete({
     typeof option === 'string' ? option : option?.[labelKey] || ''
   );
 
-  const resolvedIsOptionEqualToValue = isOptionEqualToValue || ((option, val) => option?.id === val?.id);
+  const resolvedIsOptionEqualToValue = isOptionEqualToValue || ((option, val) => {
+    if (option && typeof option === 'object' && val && typeof val === 'object') {
+      return option.id === val.id;
+    }
+    return option === val;
+  });
 
   return (
     <Autocomplete

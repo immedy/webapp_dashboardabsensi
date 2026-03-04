@@ -8,7 +8,6 @@ import {
   TextField,
   Stack,
   Chip,
-  MenuItem,
   Alert
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -230,20 +229,14 @@ export default function DarahKeluar() {
               </Grid>
             </Grid>
 
-            <TextField
-              select
+            <InputAutoComplete
               label="Ruangan"
-              fullWidth
-              value={formData.ruangan_id}
-              onChange={(e) => setFormData({ ...formData, ruangan_id: e.target.value })}
+              options={ruanganList || []}
+              value={ruanganList?.find((item) => item.id === formData.ruangan_id) || null}
+              getOptionLabel={(option) => `${option.nama} - ${option.jenis}`}
+              onChange={(newValue) => setFormData({ ...formData, ruangan_id: newValue?.id || '' })}
               required
-            >
-              {ruanganList?.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.nama} - {option.jenis}
-                </MenuItem>
-              ))}
-            </TextField>
+            />
 
             <TextField
               label="Nama Dokter"
@@ -289,3 +282,4 @@ export default function DarahKeluar() {
     </Grid>
   );
 }
+

@@ -8,7 +8,6 @@ import {
   TextField,
   Stack,
   Chip,
-  MenuItem,
   Alert
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -19,6 +18,7 @@ import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import AnimateButton from 'components/@extended/AnimateButton';
+import InputAutoComplete from 'components/input/InputAutoComplete';
 import { useDataFetch, useFormSubmit } from 'hooks/useBloodBank';
 import { bloodInventoryService, masterDataService } from 'services/bloodBank.service';
 import { formatDate, getDaysUntilExpiry, addDays, getTodayDate } from 'utils/dateUtils';
@@ -96,10 +96,10 @@ export default function DarahMasuk() {
 
   const handleKomponenChange = (komponenId) => {
     const komponen = komponenList?.find(k => k.id === komponenId);
-    const tanggalExpired = komponen 
+    const tanggalExpired = komponen
       ? addDays(formData.tanggal_terima, komponen.masa_simpan)
       : '';
-    
+
     setFormData({
       ...formData,
       komponen_id: komponenId,
@@ -154,10 +154,10 @@ export default function DarahMasuk() {
                       <Chip label={row.no_kantong} color="primary" size="small" />
                     </TableCell>
                     <TableCell>
-                      <Chip 
-                        label={`${row.golongan}${row.rhesus}`} 
-                        color="secondary" 
-                        size="small" 
+                      <Chip
+                        label={`${row.golongan}${row.rhesus}`}
+                        color="secondary"
+                        size="small"
                       />
                     </TableCell>
                     <TableCell>{row.komponen}</TableCell>
@@ -167,7 +167,7 @@ export default function DarahMasuk() {
                     <TableCell>{formatDate(row.tanggal_expired)}</TableCell>
                     <TableCell align="center">
                       {sisaHari !== null && (
-                        <Chip 
+                        <Chip
                           label={`${sisaHari} hari`}
                           color={sisaHari <= 3 ? 'error' : sisaHari <= 7 ? 'warning' : 'default'}
                           size="small"
@@ -175,10 +175,10 @@ export default function DarahMasuk() {
                       )}
                     </TableCell>
                     <TableCell align="center">
-                      <Chip 
-                        label={row.status} 
+                      <Chip
+                        label={row.status}
                         color={statusColor[row.status]}
-                        size="small" 
+                        size="small"
                       />
                     </TableCell>
                   </TableRow>
@@ -197,7 +197,7 @@ export default function DarahMasuk() {
             <Alert severity="info">
               Pastikan data yang diinput sudah benar. Nomor kantong harus unik!
             </Alert>
-            
+
             <TextField
               label="Nomor Kantong"
               fullWidth
@@ -209,68 +209,44 @@ export default function DarahMasuk() {
 
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  select
+                <InputAutoComplete
                   label="Golongan Darah"
-                  fullWidth
-                  value={formData.golongan_id}
-                  onChange={(e) => setFormData({ ...formData, golongan_id: e.target.value })}
+                  options={golonganList || []}
+                  labelKey="nama"
+                  value={golonganList?.find((item) => item.id === formData.golongan_id) || null}
+                  onChange={(newValue) => setFormData({ ...formData, golongan_id: newValue?.id || '' })}
                   required
-                >
-                  {golonganList?.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.nama}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  select
+                <InputAutoComplete
                   label="Rhesus"
-                  fullWidth
-                  value={formData.rhesus_id}
-                  onChange={(e) => setFormData({ ...formData, rhesus_id: e.target.value })}
+                  options={rhesusData || []}
+                  labelKey="nama"
+                  value={rhesusData?.find((item) => item.id === formData.rhesus_id) || null}
+                  onChange={(newValue) => setFormData({ ...formData, rhesus_id: newValue?.id || '' })}
                   required
-                >
-                  {rhesusData?.map((option) => (
-                    <MenuItem key={option.id} value={option.id}>
-                      {option.nama}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                />
               </Grid>
             </Grid>
 
-            <TextField
-              select
+            <InputAutoComplete
               label="Komponen Darah"
-              fullWidth
-              value={formData.komponen_id}
-              onChange={(e) => handleKomponenChange(e.target.value)}
+              options={komponenList || []}
+              value={komponenList?.find((item) => item.id === formData.komponen_id) || null}
+              getOptionLabel={(option) => `${option.nama} (${option.kode}) - Masa Simpan: ${option.masa_simpan} hari`}
+              onChange={(newValue) => handleKomponenChange(newValue?.id || '')}
               required
-            >
-              {komponenList?.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.nama} ({option.kode}) - Masa Simpan: {option.masa_simpan} hari
-                </MenuItem>
-              ))}
-            </TextField>
+            />
 
-            <TextField
-              select
+            <InputAutoComplete
               label="Supplier/PMI"
-              fullWidth
-              value={formData.supplier_id}
-              onChange={(e) => setFormData({ ...formData, supplier_id: e.target.value })}
+              options={supplierList || []}
+              labelKey="nama"
+              value={supplierList?.find((item) => item.id === formData.supplier_id) || null}
+              onChange={(newValue) => setFormData({ ...formData, supplier_id: newValue?.id || '' })}
               required
-            >
-              {supplierList?.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.nama}
-                </MenuItem>
-              ))}
-            </TextField>
+            />
 
             <TextField
               label="Volume (ml)"
