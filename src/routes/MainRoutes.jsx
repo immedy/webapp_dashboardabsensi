@@ -9,7 +9,7 @@ import DashboardLayout from 'layout/Dashboard';
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 
 // render - Master Data
-const KomponenDarah = Loadable(lazy(() => import('pages/master/KomponenDarah')));
+const KomponenDarah = Loadable(lazy(() => import('pages/master/komponen-darah/KomponenDarah')));
 const Supplier = Loadable(lazy(() => import('pages/master/Supplier')));
 const Ruangan = Loadable(lazy(() => import('pages/master/Ruangan')));
 

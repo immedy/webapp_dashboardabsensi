@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = useCallback(async () => {
     try {
-      const res = await api.get('/auth/getuser');
+      const res = await api.get('/getpegawai');
       setUser(res.data);
       localStorage.setItem('user', JSON.stringify(res.data));
     } catch (err) {
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = useCallback(async (username, password) => {
     try {
-      const res = await api.post('/auth/login', { username, password });
+      const res = await api.post('/login', { username, password });
       const { token } = res.data;
 
       localStorage.setItem('access_token', token);
