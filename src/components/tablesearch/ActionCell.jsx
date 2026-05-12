@@ -4,16 +4,12 @@ import TableCell from '@mui/material/TableCell';
 import AnimateButton from 'components/@extended/AnimateButton';
 
 export default function ActionCell({ children, align = 'right' }) {
+  const justifyContent = align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start';
+
   return (
     <TableCell align={align}>
-      <Stack
-        direction="row"
-        spacing={1}
-        justifyContent={align === 'right' ? 'flex-end' : 'flex-start'}
-      >
-        <AnimateButton>
-        {children}
-        </AnimateButton>
+      <Stack direction="row" spacing={1} justifyContent={justifyContent} alignItems="center">
+        <AnimateButton>{children}</AnimateButton>
       </Stack>
     </TableCell>
   );

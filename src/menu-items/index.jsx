@@ -1,11 +1,11 @@
 // project import
-import { dashboard, masterData, transaksi, stokOpname } from './dashboard';
+import { absensiMenu } from './dashboard';
 
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [dashboard, masterData, transaksi, stokOpname]
+  items: [absensiMenu]
 };
 
 export default menuItems;

@@ -59,7 +59,7 @@ export default function AuthLogin({ isDemo = false }) {
         try {
           await login(values.username, values.password);
           toast.success('Login Berhasil!');
-          navigate('/dashboard/default', { replace: true });
+          navigate('/dashboard', { replace: true });
         } catch (error) {
           const message = error.message;
           // Kita tetap setErrors agar state formik tahu ada error, 

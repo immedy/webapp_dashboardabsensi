@@ -5,21 +5,17 @@ import AuthGuard from '../utils/route-guard/AuthGuard';
 import Loadable from 'components/Loadable';
 import DashboardLayout from 'layout/Dashboard';
 
-// render - Dashboard
-const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
-
-// render - Master Data
-const KomponenDarah = Loadable(lazy(() => import('pages/master/komponen-darah/KomponenDarah')));
-const Supplier = Loadable(lazy(() => import('pages/master/supplier/Supplier')));
-const Ruangan = Loadable(lazy(() => import('pages/master/Ruangan')));
-
-// render - Transaksi
-const DarahMasuk = Loadable(lazy(() => import('pages/transaksi/DarahMasuk')));
-const DarahKeluar = Loadable(lazy(() => import('pages/transaksi/DarahKeluar')));
-
-// render - Stok Opname
-const StokOpname = Loadable(lazy(() => import('pages/stokopname/StokOpname')));
-const StokOpnameDetail = Loadable(lazy(() => import('pages/stokopname/StokOpnameDetail')));
+// render - Absensi
+const DashboardAbsensi = Loadable(lazy(() => import('pages/absensi/dashboard/Dashboard')));
+const DetailJamKerja = Loadable(lazy(() => import('pages/absensi/input-jadwal/detail-jam-kerja/DetailJamKerja')));
+const JadwalPegawai = Loadable(lazy(() => import('pages/absensi/input-jadwal/jadwal-pegawai/JadwalPegawai')));
+const InputJadwalPegawai = Loadable(lazy(() => import('pages/absensi/input-jadwal/jadwal-pegawai/InputJadwalPegawai')));
+const HapusLogAbsenPegawai = Loadable(lazy(() => import('pages/absensi/input-jadwal/jadwal-pegawai/HapusLogAbsenPegawai')));
+const JadwalManajemen = Loadable(lazy(() => import('pages/absensi/input-jadwal/jadwal-manajemen/JadwalManajemen')));
+const Laporan = Loadable(lazy(() => import('pages/absensi/laporan/Laporan')));
+const InputTelat = Loadable(lazy(() => import('pages/absensi/input-telat/InputTelat')));
+const InputLogPegawai = Loadable(lazy(() => import('pages/absensi/input-telat/log-pegawai/InputLogPegawai')));
+const JadwalPegawaiTelat = Loadable(lazy(() => import('pages/absensi/input-telat/jadwal-pegawai/JadwalPegawaiTelat')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -33,57 +29,60 @@ const MainRoutes = {
   children: [
     {
       path: '/',
-      element: <DashboardDefault />
+      element: <DashboardAbsensi />
     },
     {
       path: 'dashboard',
       children: [
         {
-          path: 'default',
-          element: <DashboardDefault />
+          path: '',
+          element: <DashboardAbsensi />
         }
       ]
     },
     {
-      path: 'master',
+      path: 'jadwal',
       children: [
         {
-          path: 'komponen-darah',
-          element: <KomponenDarah />
+          path: 'detail-jam-kerja',
+          element: <DetailJamKerja />
         },
         {
-          path: 'supplier',
-          element: <Supplier />
+          path: 'jadwal-pegawai',
+          element: <JadwalPegawai />
         },
         {
-          path: 'ruangan',
-          element: <Ruangan />
+          path: 'jadwal-pegawai/:id',
+          element: <InputJadwalPegawai />
+        },
+        {
+          path: 'jadwal-pegawai/:id/hapus-log',
+          element: <HapusLogAbsenPegawai />
+        },
+        {
+          path: 'jadwal-manajemen',
+          element: <JadwalManajemen />
         }
       ]
     },
     {
-      path: 'transaksi',
-      children: [
-        {
-          path: 'darah-masuk',
-          element: <DarahMasuk />
-        },
-        {
-          path: 'darah-keluar',
-          element: <DarahKeluar />
-        }
-      ]
+      path: 'laporan',
+      element: <Laporan />
     },
     {
-      path: 'stokopname',
+      path: 'input-telat',
       children: [
         {
           path: '',
-          element: <StokOpname />
+          element: <InputTelat />
         },
         {
-          path: 'detail/:id',
-          element: <StokOpnameDetail />
+          path: ':id',
+          element: <InputLogPegawai />
+        },
+        {
+          path: ':id/jadwal',
+          element: <JadwalPegawaiTelat />
         }
       ]
     }

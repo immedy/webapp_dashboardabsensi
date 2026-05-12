@@ -1,123 +1,73 @@
 // assets
-import { 
-  DashboardOutlined,
-  MedicineBoxOutlined,
-  FileDoneOutlined,
-  ExportOutlined,
-  ImportOutlined,
-  SettingOutlined,
-  DatabaseOutlined,
-  SwapOutlined
-} from '@ant-design/icons';
+import { DashboardOutlined, FileDoneOutlined, ImportOutlined, DatabaseOutlined } from '@ant-design/icons';
 
 // icons
 const icons = {
   DashboardOutlined,
-  MedicineBoxOutlined,
   FileDoneOutlined,
-  ExportOutlined,
   ImportOutlined,
-  SettingOutlined,
-  DatabaseOutlined,
-  SwapOutlined
+  DatabaseOutlined
 };
 
-// ==============================|| MENU ITEMS - BLOOD BANK ||============================== //
-
-const dashboard = {
-  id: 'group-dashboard',
-  title: 'Dashboard',
+const absensiMenu = {
+  id: 'group-absensi',
+  title: 'Menu Utama',
   type: 'group',
   children: [
     {
-      id: 'dashboard',
+      id: 'dashboard-absensi',
       title: 'Dashboard',
       type: 'item',
-      url: '/dashboard/default',
+      url: '/dashboard',
       icon: icons.DashboardOutlined,
       breadcrumbs: false
-    }
-  ]
-};
-
-const masterData = {
-  id: 'group-master',
-  title: 'Master Data',
-  type: 'group',
-  children: [
-    {
-      id: 'komponen-darah',
-      title: 'Komponen Darah',
-      type: 'item',
-      url: '/master/komponen-darah',
-      icon: icons.MedicineBoxOutlined,
-      breadcrumbs: true
     },
     {
-      id: 'supplier',
-      title: 'Supplier / PMI',
-      type: 'item',
-      url: '/master/supplier',
-      icon: icons.DatabaseOutlined,
-      breadcrumbs: true
-    },
-    {
-      id: 'ruangan',
-      title: 'Ruangan',
-      type: 'item',
-      url: '/master/ruangan',
-      icon: icons.SettingOutlined,
-      breadcrumbs: true
-    }
-  ]
-};
-
-const transaksi = {
-  id: 'group-transaksi',
-  title: 'Transaksi',
-  type: 'group',
-  children: [
-    {
-      id: 'transaksi-darah',
-      title: 'Transaksi Darah',
+      id: 'input-jadwal',
+      title: 'Input Jadwal',
       type: 'collapse',
-      icon: icons.SwapOutlined,
+      icon: icons.DatabaseOutlined,
       children: [
         {
-          id: 'darah-masuk',
-          title: 'Darah Masuk',
+          id: 'detail-jam-kerja',
+          title: 'Detail Jam Kerja',
           type: 'item',
-          url: '/transaksi/darah-masuk',
-          icon: icons.ImportOutlined,
+          url: '/jadwal/detail-jam-kerja',
           breadcrumbs: true
         },
         {
-          id: 'darah-keluar',
-          title: 'Darah Keluar',
+          id: 'jadwal-pegawai',
+          title: 'Jadwal Pegawai',
           type: 'item',
-          url: '/transaksi/darah-keluar',
-          icon: icons.ExportOutlined,
+          url: '/jadwal/jadwal-pegawai',
+          breadcrumbs: true
+        },
+        {
+          id: 'jadwal-manajemen',
+          title: 'Jadwal Manajemen',
+          type: 'item',
+          url: '/jadwal/jadwal-manajemen',
           breadcrumbs: true
         }
       ]
-    }
-  ]
-};
-
-const stokOpname = {
-  id: 'group-stokopname',
-  title: 'Stok Opname',
-  type: 'group',
-  children: [
+    },
     {
-      id: 'stokopname',
-      title: 'Stok Opname',
+      id: 'laporan',
+      title: 'Laporan',
       type: 'item',
-      url: '/stokopname',
+      url: '/laporan',
       icon: icons.FileDoneOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'input-telat',
+      title: 'Input Telat',
+      type: 'item',
+      url: '/input-telat',
+      icon: icons.ImportOutlined,
       breadcrumbs: true
     }
   ]
 };
 
-export { dashboard, masterData, transaksi, stokOpname };
+export { absensiMenu };
