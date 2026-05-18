@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   Typography,
   Card,
@@ -25,6 +26,7 @@ import { LoginOutlined, LogoutOutlined, CalendarOutlined, WarningOutlined, EyeOu
 import { BarChart } from '@mui/x-charts/BarChart';
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_blue.css';
+
 
 // Dummy data for table
 const dummyTableData = [
@@ -69,6 +71,7 @@ const employeeData = [
 ];
 
 const Dashboard = () => {
+  const { logout ,user, absensiData } = useAuth();
   const [page, setPage] = useState(1);
   const [filterDate, setFilterDate] = useState(new Date());
 
@@ -116,8 +119,8 @@ const Dashboard = () => {
                   RR
                 </Avatar>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>Ragil M. Rivandi</Typography>
-                  <Typography variant="body2" color="textSecondary">NIP: H199204042015111083</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>{user?.nama_lengkap}</Typography>
+                  <Typography variant="body2" color="textSecondary">{user?.nip}</Typography>
                 </Box>
               </Stack>
 
@@ -127,7 +130,7 @@ const Dashboard = () => {
                     <LoginOutlined style={{ fontSize: '1.2rem' }} />
                   </Avatar>
                   <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>3</Typography>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{absensiData.loadingData ? '...' : absensiData.monthlyCI}</Typography>
                     <Typography variant="body2" color="textSecondary">Total absen masuk</Typography>
                   </Box>
                 </Stack>
@@ -136,7 +139,7 @@ const Dashboard = () => {
                     <LogoutOutlined style={{ fontSize: '1.2rem' }} />
                   </Avatar>
                   <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>3</Typography>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{absensiData.loadingData ? '...' : absensiData.monthlyCO}</Typography>
                     <Typography variant="body2" color="textSecondary">Total absen pulang</Typography>
                   </Box>
                 </Stack>
@@ -145,7 +148,7 @@ const Dashboard = () => {
                     <CalendarOutlined style={{ fontSize: '1.2rem' }} />
                   </Avatar>
                   <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>23</Typography>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{absensiData.loadingData ? '...' : absensiData.workingDays}</Typography>
                     <Typography variant="body2" color="textSecondary">Jumlah Hari Kerja</Typography>
                   </Box>
                 </Stack>
