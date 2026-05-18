@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
       monthlyCI: 0,
       monthlyCO: 0,
       workingDays: 0,
+      lastAbsensiTme: null,
       loadingData: false,
       error: null
     });
@@ -49,16 +50,18 @@ export const AuthProvider = ({ children }) => {
     setAbsensiData(prev => ({ ...prev, loadingData: true, error: null }));
     try {
       // Parallel API fetching for faster loading times1
-      const [ciRes, coRes, wdRes] = await Promise.all([
+      const [ciRes, coRes, wdRes, latRes] = await Promise.all([
         api.get(`/absensi/monthly-ci/${empId}`),
                                                       api.get(`/absensi/monthly-co/${empId}`),
-                                                      api.get(`/absensi/working-days/${empId}`)
+                                                      api.get(`/absensi/working-days/${empId}`),
+                                                      api.get(`/absensi/last-absensi-time/${empId}`)
       ]);
 
       setAbsensiData({
         monthlyCI: ciRes.data.CheckIn || 0,
         monthlyCO: coRes.data.CheckOut || 0,
         workingDays: wdRes.data.workingDays || 0,
+        lastAbsensiTme: latRes.data.lastAbsensiTme || 0,
         loadingData: false,
         error: null
       });

@@ -96,7 +96,7 @@ const Dashboard = () => {
             </Stack>
             <Box sx={{ textAlign: 'center', mt: 4 }}>
               <Typography variant="subtitle1" color="inherit" sx={{ opacity: 0.8 }}>Aktivitas Terakhir</Typography>
-              <Typography variant="h2" color="inherit" sx={{ fontWeight: 600, my: 1 }}>16:52:44</Typography>
+              <Typography variant="h2" color="inherit" sx={{ fontWeight: 600, my: 1 }}>{absensiData.loadingData ? '...' : absensiData.lastAbsensiTime}</Typography>
               <Typography variant="body1" color="inherit">Absen Pulang</Typography>
             </Box>
           </Box>
