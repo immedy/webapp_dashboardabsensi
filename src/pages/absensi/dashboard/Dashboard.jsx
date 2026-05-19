@@ -203,7 +203,7 @@ const Dashboard = () => {
     <WarningOutlined style={{ fontSize: '1.2rem' }} />
     </Avatar>
     <Box>
-    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>0 menit</Typography>
+    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{absensiData?.loadingData?'...':absensiData?.totalLateMinutes} menit</Typography>
     <Typography variant="body2" color="textSecondary">Jumlah Total Telat</Typography>
     </Box>
     </Stack>
