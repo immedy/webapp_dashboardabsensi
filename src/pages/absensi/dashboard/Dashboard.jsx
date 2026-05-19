@@ -56,12 +56,24 @@ const employeeData = [
 const Dashboard = () => {
   const { logout, user, absensiData, fetchDailyReport } = useAuth();
 
-  // 1. Separate state hooks for independent table paginations
+  // 1. Hook state initialization variables
   const [personalPage, setPersonalPage] = useState(1);
   const [dailyPage, setDailyPage] = useState(1);
   const [filterDate, setFilterDate] = useState(new Date());
+  const [searchName, setSearchName] = useState(null);
+  const [searchRoom, setSearchRoom] = useState(null);
 
   const itemsPerPage = 10;
+
+  // =========================================================
+  // FIXED INITIALIZATION ORDER: Base arrays defined first
+  // =========================================================
+  const safeDailyReport = absensiData?.dailyReport || [];
+  const safeMonthlyLogs = absensiData?.monthlyLogs || [];
+
+  // 2. Extract unique autocomplete option choices safely
+  const uniqueNameOptions = Array.from(new Set(safeDailyReport.map(row => row.nama))).sort();
+  const uniqueRoomOptions = Array.from(new Set(safeDailyReport.map(row => row.ruangan))).filter(r => r && r !== '-').sort();
 
   // Helper to convert JavaScript Dates into standard local YYYY-MM-DD strings
   const formatDateString = (dateObj) => {
@@ -76,14 +88,20 @@ const Dashboard = () => {
     if (filterDate) {
       const formattedDate = formatDateString(filterDate);
       fetchDailyReport(formattedDate);
-      setDailyPage(1); // Reset daily page view back to 1 on filter changes
+      setDailyPage(1);
     }
   }, [filterDate, fetchDailyReport]);
+
+  // Filter data based on selected autocomplete options
+  const filteredDailyReport = safeDailyReport.filter((row) => {
+    const matchName = !searchName || row.nama === searchName;
+    const matchRoom = !searchRoom || row.ruangan === searchRoom;
+    return matchName && matchRoom;
+  });
 
   // ==========================================
   // TOP TABLE SLICING (PERSONAL LOGS)
   // ==========================================
-  const safeMonthlyLogs = absensiData?.monthlyLogs || [];
   const totalPersonalItems = safeMonthlyLogs.length;
   const personalPageCount = Math.ceil(totalPersonalItems / itemsPerPage);
   const displayedPersonalLogs = safeMonthlyLogs.slice(
@@ -94,12 +112,11 @@ const Dashboard = () => {
   // ==========================================
   // BOTTOM TABLE SLICING (DAILY TEAM REPORT)
   // ==========================================
-  const safeDailyReport = absensiData?.dailyReport || [];
-  const totalDailyItems = safeDailyReport.length;
+  const totalDailyItems = filteredDailyReport.length;
   const dailyPageCount = Math.ceil(totalDailyItems / itemsPerPage);
-  const displayedDailyReport = safeDailyReport.slice(
+  const displayedDailyReport = filteredDailyReport.slice(
     (dailyPage - 1) * itemsPerPage,
-                                                     dailyPage * itemsPerPage
+                                                         dailyPage * itemsPerPage
   );
 
   return (
@@ -320,22 +337,24 @@ const Dashboard = () => {
     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }} alignItems="stretch">
     <Autocomplete
     sx={{ width: { xs: '100%', sm: 250 } }}
-    options={[
-      'Nurul Hatimah', 'Sri Sundari', 'Suhaidi', 'Marliyana',
-      'Beni Rahman', 'Mirna Hidayati', 'M. Ali Yus..', 'Muzi Burrakhman',
-      'Farida Aryani', 'Eka Nur Afriani'
-    ]}
+    options={uniqueNameOptions}
+    value={searchName}
+    onChange={(event, newValue) => {
+      setSearchName(newValue);
+      setDailyPage(1);
+    }}
     renderInput={(params) => (
       <TextField {...params} label="Cari Nama Pegawai..." variant="outlined" />
     )}
     />
     <Autocomplete
     sx={{ width: { xs: '100%', sm: 250 } }}
-    options={[
-      'IGD', 'Mobilisasi Dana', 'Gudang Farmasi', 'Prasarana',
-      'SDM', 'Pengadaan Aset', 'Komite Mutu', 'Gawat Darurat',
-      'Rawat Inap', 'Promosi Kesehatan'
-    ]}
+    options={uniqueRoomOptions}
+    value={searchRoom}
+    onChange={(event, newValue) => {
+      setSearchRoom(newValue);
+      setDailyPage(1);
+    }}
     renderInput={(params) => (
       <TextField {...params} label="Filter Ruangan" variant="outlined" />
     )}
@@ -343,7 +362,11 @@ const Dashboard = () => {
     <Flatpickr
     value={filterDate}
     options={{ dateFormat: 'd/m/Y' }}
-    onChange={([date]) => setFilterDate(date)}
+    onChange={([date]) => {
+      setFilterDate(date);
+      setSearchName(null);
+      setSearchRoom(null);
+    }}
     render={({ defaultValue }, ref) => (
       <TextField
       inputRef={ref}
@@ -384,7 +407,6 @@ const Dashboard = () => {
       <TableCell colSpan={8} align="center">Tidak ada jadwal pegawai pada tanggal ini</TableCell>
       </TableRow>
     ) : (
-      // 2. Mapping through paginated slices instead of the entire array length
       displayedDailyReport.map((row, index) => {
         const renderChip = (val, type) => {
           if (val === 'Belum Absen') {
@@ -407,7 +429,6 @@ const Dashboard = () => {
 
         return (
           <TableRow key={row.id || index} hover sx={{ '& td': { borderBottom: '1px dashed #f0f0f0' } }}>
-          {/* 3. Sequential dynamic index tracking calculated across pages */}
           <TableCell sx={{ fontWeight: 600 }}>{(dailyPage - 1) * itemsPerPage + index + 1}</TableCell>
           <TableCell>
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{row.nama}</Typography>
@@ -432,7 +453,6 @@ const Dashboard = () => {
     </Table>
     </TableContainer>
 
-    {/* 4. Connect dynamic pagination component footer attributes */}
     <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f0f0f0' }}>
     <Typography variant="body2" color="textSecondary">
     Menampilkan {displayedDailyReport.length} dari total {totalDailyItems} data jadwal kerja pegawai pada tanggal terpilih.
