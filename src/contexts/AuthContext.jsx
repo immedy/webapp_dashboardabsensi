@@ -13,6 +13,10 @@ export const AuthProvider = ({ children }) => {
     monthlyCI: 0,
     monthlyCO: 0,
     workingDays: 0,
+    lastAbsensiTime: null,
+    statusAbsen: null,
+    monthlyLogs:[],
+    dailyReport:[],
     loadingData: false,
     error: null
   });
@@ -26,11 +30,38 @@ export const AuthProvider = ({ children }) => {
       monthlyCI: 0,
       monthlyCO: 0,
       workingDays: 0,
-      lastAbsensiTme: null,
+      lastAbsensiTime: null,
+      statusAbsen:null,
+      monthlyLogs:[],
+      dailyReport:[],
       loadingData: false,
       error: null
     });
   }, []);
+
+  const fetchDailyReport = useCallback(async (dateString) => {
+    setAbsensiData(prev => ({ ...prev, loadingData: true, error: null }));
+    try {
+      // e.g., calling GET /api/absensi/daily-report?date=2026-05-19
+      const res = await api.get('/absensi/daily-report', {
+        params: { date: dateString }
+      });
+
+      setAbsensiData(prev => ({
+        ...prev,
+        dailyReport: res.data || [],
+        loadingData: false
+      }));
+    } catch (err) {
+      console.error('Gagal mengambil data laporan harian:', err);
+      setAbsensiData(prev => ({
+        ...prev,
+        loadingData: false,
+        error: 'Gagal memuat rekap detail keterlambatan'
+      }));
+    }
+  }, []);
+
 
   const fetchUser = useCallback(async () => {
     try {
@@ -50,18 +81,21 @@ export const AuthProvider = ({ children }) => {
     setAbsensiData(prev => ({ ...prev, loadingData: true, error: null }));
     try {
       // Parallel API fetching for faster loading times1
-      const [ciRes, coRes, wdRes, latRes] = await Promise.all([
+      const [ciRes, coRes, wdRes, latRes, logRes] = await Promise.all([
         api.get(`/absensi/monthly-ci/${empId}`),
                                                       api.get(`/absensi/monthly-co/${empId}`),
                                                       api.get(`/absensi/working-days/${empId}`),
-                                                      api.get(`/absensi/last-absensi-time/${empId}`)
+                                                      api.get(`/absensi/last-absensi-time/${empId}`),
+                                                      api.get(`/absensi/monthly-log/${empId}`)
       ]);
 
       setAbsensiData({
         monthlyCI: ciRes.data.CheckIn || 0,
         monthlyCO: coRes.data.CheckOut || 0,
         workingDays: wdRes.data.workingDays || 0,
-        lastAbsensiTme: latRes.data.lastAbsensiTme || 0,
+        lastAbsensiTime: latRes.data.lastAbsensiTime || null,
+        statusAbsen:latRes.data.statusAbsen || null,
+        monthlyLogs:logRes.data || [],
         loadingData: false,
         error: null
       });
@@ -132,6 +166,7 @@ export const AuthProvider = ({ children }) => {
       logout,
       // Added variables to global context
       absensiData,
+      fetchDailyReport,
       refreshDashboard: () => {
         const empId = user?.id || user?.pegawai_id;
         if (empId) fetchAbsensiDashboard(empId);
