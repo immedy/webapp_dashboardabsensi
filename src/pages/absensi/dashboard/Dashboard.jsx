@@ -69,6 +69,28 @@ const Dashboard = () => {
   // FIXED INITIALIZATION ORDER: Base arrays defined first
   // =========================================================
   const safeDailyReport = absensiData?.dailyReport || [];
+
+  // Transform the live daily report data into a sorted top 10 list for the chart
+  const topLateEmployeesData = safeDailyReport
+  .map(row => {
+    let minutes = 0;
+    // Extract numerical minutes from strings like "15 Menit"
+    if (row.telat && row.telat.includes('Menit')) {
+      minutes = parseInt(row.telat, 10);
+    }
+    return {
+      // Use the name value provided by your master data join
+      name: row.nama,
+      value: minutes
+    };
+  })
+  // Filter out those who are on time or haven't checked in yet
+  .filter(item => item.value > 0)
+  // Sort descending by highest minutes late
+  .sort((a, b) => b.value - a.value)
+  // Take only the top 10 rank entries
+  .slice(0, 10);
+
   const safeMonthlyLogs = absensiData?.monthlyLogs || [];
 
   // 2. Extract unique autocomplete option choices safely
@@ -309,24 +331,43 @@ const Dashboard = () => {
     <MainCard content={false} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
     <Box sx={{ p: 3, pb: 1 }}>
     <Typography variant="h5" sx={{ fontWeight: 600 }}>Keterlambatan Pegawai Hari ini</Typography>
-    <Typography variant="body2" color="textSecondary">Urutan menit keterlambatan check-in terbesar</Typography>
+    <Typography variant="body2" color="textSecondary">10 besar menit keterlambatan check-in tertinggi</Typography>
     </Box>
     <Box sx={{ p: 2, flexGrow: 1, height: 350 }}>
-    <BarChart
-    dataset={employeeData}
-    yAxis={[
-      {
-        scaleType: 'band',
-        dataKey: 'name',
-        tickLabelStyle: { display: 'none' }
-      }
-    ]}
-    layout="horizontal"
-    series={[{ dataKey: 'value', color: '#ff4d4f' }]}
-    height={320}
-    margin={{ top: 20, bottom: 30, left: 0, right: 10 }}
-    slotProps={{ legend: { hidden: true } }}
-    />
+    {topLateEmployeesData.length === 0 ? (
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: 280 }}>
+      <Typography color="textSecondary">Tidak ada data keterlambatan hari ini</Typography>
+      </Box>
+    ) : (
+      <BarChart
+      // Swap out the dummy dataset for our live filtered list
+      dataset={topLateEmployeesData}
+      yAxis={[
+        {
+          scaleType: 'band',
+          dataKey: 'name',
+          // Display employee names clearly along the vertical bars axis
+          tickLabelStyle: {
+            fontSize: 11,
+            textAnchor: 'end',
+          },
+          valueFormatter: (value) => value, // Forces the raw string value to display directly without truncating
+        }
+      ]}
+      layout="horizontal"
+      series={[
+        {
+          dataKey: 'value',
+          color: '#ff4d4f',
+          valueFormatter: (value) => `${value} Menit`
+        }
+      ]}
+      height={320}
+      // Added a left margin padding space so names are not cut off on display boundary
+      margin={{ top: 20, bottom: 30, left: 160, right: 20 }}
+      slotProps={{ legend: { hidden: true } }}
+      />
+    )}
     </Box>
     </MainCard>
     </Grid>
