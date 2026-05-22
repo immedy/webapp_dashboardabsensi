@@ -39,20 +39,6 @@ const roomData = [
 { room: 'Promosi Kesehatan', value: 2 },
 ];
 
-// Dummy data for employee chart
-const employeeData = [
-  { name: 'Nurul Hatimah', value: 410 },
-{ name: 'Sri Sundari', value: 360 },
-{ name: 'Suhaidi', value: 70 },
-{ name: 'Marliyana', value: 55 },
-{ name: 'Beni Rahman', value: 55 },
-{ name: 'Mirna Hidayati', value: 50 },
-{ name: 'M. Ali Yus..', value: 45 },
-{ name: 'Muzi Burrakhman', value: 42 },
-{ name: 'Farida Aryani', value: 40 },
-{ name: 'Eka Nur Afriani', value: 40 },
-];
-
 const Dashboard = () => {
   const { logout, user, absensiData, fetchDailyReport } = useAuth();
 
@@ -74,28 +60,55 @@ const Dashboard = () => {
   const topLateEmployeesData = safeDailyReport
   .map(row => {
     let minutes = 0;
-    // Extract numerical minutes from strings like "15 Menit"
     if (row.telat && row.telat.includes('Menit')) {
       minutes = parseInt(row.telat, 10);
     }
     return {
-      // Use the name value provided by your master data join
       name: row.nama,
       value: minutes
     };
   })
-  // Filter out those who are on time or haven't checked in yet
   .filter(item => item.value > 0)
-  // Sort descending by highest minutes late
   .sort((a, b) => b.value - a.value)
-  // Take only the top 10 rank entries
   .slice(0, 10);
+
+  // Transform the live daily report data into a late count per room
+  const lateByRoomMap = {};
+
+  safeDailyReport.forEach(row => {
+    let minutes = 0;
+    if (row.telat && row.telat.includes('Menit')) {
+      minutes = parseInt(row.telat, 10);
+    }
+
+    // If the employee is late, determine the correct room key
+    if (minutes > 0 && row.ruangan) {
+      // FIX: Convert '-' into a readable 'Tanpa Ruangan' bar group key
+      const roomKey = row.ruangan === '-' ? 'Tanpa Ruangan' : row.ruangan;
+
+      if (!lateByRoomMap[roomKey]) {
+        lateByRoomMap[roomKey] = 0;
+      }
+      lateByRoomMap[roomKey] += 1; // Increment late count
+    }
+  });
+
+  // Convert the map object into an array and sort it from highest to lowest
+  const topLateRoomsData = Object.keys(lateByRoomMap)
+  .map(room => ({
+    room: room,
+    value: lateByRoomMap[room]
+  }))
+  .sort((a, b) => b.value - a.value);
 
   const safeMonthlyLogs = absensiData?.monthlyLogs || [];
 
   // 2. Extract unique autocomplete option choices safely
   const uniqueNameOptions = Array.from(new Set(safeDailyReport.map(row => row.nama))).sort();
-  const uniqueRoomOptions = Array.from(new Set(safeDailyReport.map(row => row.ruangan))).filter(r => r && r !== '-').sort();
+  // const uniqueRoomOptions = Array.from(new Set(safeDailyReport.map(row => row.ruangan))).filter(r => r).sort();
+  const uniqueRoomOptions = Array.from(new Set(safeDailyReport.map(row => {
+    return row.ruangan === '-' ? 'Tanpa Ruangan' : row.ruangan;
+  }))).filter(r => r).sort();
 
   // Helper to convert JavaScript Dates into standard local YYYY-MM-DD strings
   const formatDateString = (dateObj) => {
@@ -117,7 +130,17 @@ const Dashboard = () => {
   // Filter data based on selected autocomplete options
   const filteredDailyReport = safeDailyReport.filter((row) => {
     const matchName = !searchName || row.nama === searchName;
-    const matchRoom = !searchRoom || row.ruangan === searchRoom;
+
+    // Handle matching both normal rooms and the unassigned label
+    let matchRoom = true;
+    if (searchRoom) {
+      if (searchRoom === 'Tanpa Ruangan') {
+        matchRoom = row.ruangan === '-';
+      } else {
+        matchRoom = row.ruangan === searchRoom;
+      }
+    }
+
     return matchName && matchRoom;
   });
 
@@ -225,7 +248,7 @@ const Dashboard = () => {
     <WarningOutlined style={{ fontSize: '1.2rem' }} />
     </Avatar>
     <Box>
-    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{absensiData?.loadingData?'...':absensiData?.totalLateMinutes} menit</Typography>
+    <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{absensiData?.loadingData ? '...' : absensiData?.totalLateMinutes} menit</Typography>
     <Typography variant="body2" color="textSecondary">Jumlah Total Telat</Typography>
     </Box>
     </Stack>
@@ -309,20 +332,38 @@ const Dashboard = () => {
     <Typography variant="body2" color="textSecondary">Jumlah pegawai telat check-in berdasarkan ruangan</Typography>
     </Box>
     <Box sx={{ p: 2, flexGrow: 1, height: 350 }}>
-    <BarChart
-    dataset={roomData}
-    xAxis={[
-      {
-        scaleType: 'band',
-        dataKey: 'room',
-        tickLabelStyle: { angle: 45, textAnchor: 'start', fontSize: 11 }
-      }
-    ]}
-    series={[{ dataKey: 'value', color: '#fadb14' }]}
-    height={320}
-    margin={{ top: 20, bottom: 30, left: 0, right: 10 }}
-    slotProps={{ legend: { hidden: true } }}
-    />
+    {topLateRoomsData.length === 0 ? (
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: 280 }}>
+      <Typography color="textSecondary">Tidak ada data pegawai telat hari ini</Typography>
+      </Box>
+    ) : (
+      <BarChart
+      // 1. Swap out dummy dataset for the live aggregated room data
+      dataset={topLateRoomsData}
+      xAxis={[
+        {
+          scaleType: 'band',
+          dataKey: 'room',
+          tickLabelStyle: {
+            angle: 45,
+            textAnchor: 'start',
+            fontSize: 11
+          }
+        }
+      ]}
+      series={[
+        {
+          dataKey: 'value',
+          color: '#fadb14',
+          valueFormatter: (value) => `${value} Pegawai`
+        }
+      ]}
+      height={320}
+      // 2. Increase bottom margin so the angled text doesn't get clipped
+      margin={{ top: 20, bottom: 80, left: 30, right: 20 }}
+      slotProps={{ legend: { hidden: true } }}
+      />
+    )}
     </Box>
     </MainCard>
     </Grid>
@@ -340,18 +381,16 @@ const Dashboard = () => {
       </Box>
     ) : (
       <BarChart
-      // Swap out the dummy dataset for our live filtered list
       dataset={topLateEmployeesData}
       yAxis={[
         {
           scaleType: 'band',
           dataKey: 'name',
-          // Display employee names clearly along the vertical bars axis
+          width: 150,
           tickLabelStyle: {
             fontSize: 11,
             textAnchor: 'end',
-          },
-          valueFormatter: (value) => value, // Forces the raw string value to display directly without truncating
+          }
         }
       ]}
       layout="horizontal"
@@ -363,9 +402,18 @@ const Dashboard = () => {
         }
       ]}
       height={320}
-      // Added a left margin padding space so names are not cut off on display boundary
       margin={{ top: 20, bottom: 30, left: 160, right: 20 }}
       slotProps={{ legend: { hidden: true } }}
+      // =====================================================================
+      // FIXED SX OVERRIDE BLOCK: Disables CSS layout text-clipping behavior
+      // =====================================================================
+      sx={{
+        '& .MuiChartsAxis-left .MuiChartsAxis-tickLabel': {
+          textOverflow: 'unset !important',
+          whiteSpace: 'nowrap !important',
+          overflow: 'visible !important',
+        }
+      }}
       />
     )}
     </Box>
@@ -485,7 +533,7 @@ const Dashboard = () => {
           </TableCell>
           <TableCell>{renderChip(row.checkIn, 'checkin')}</TableCell>
           <TableCell>{renderChip(row.telat, 'telat')}</TableCell>
-          <TableCell>{renderChip(row.checkOut, 'checkout')}</TableCell>
+          <TableCell>{row.checkOut ? renderChip(row.checkOut, 'checkout') : '-'}</TableCell>
           </TableRow>
         );
       })
